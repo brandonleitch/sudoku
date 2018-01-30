@@ -7,12 +7,24 @@
 #define MAX_HEIGHT HEIGHT * 3 + 4
 #define MAX_WIDTH WIDTH * 3 + 4
 
-#define NUM_WINDOWS 9
+#define NUM_WINDOW_ROWS
+#define NUM_WINDOW_COLS
 
-WINDOW* gen_windows();
-void fill_screen_delims();
-void fill_window(WINDOW *win);
-void fill_delims(WINDOW *win);
+class WindowController {
+public:
+  static WINDOW* windows[3][3];
+  static void gen_windows();
+  static void fill_screen_delims();
+  static void fill_window(WINDOW *win);
+  static void fill_delims(WINDOW *win);
+  static int get_row(int r);
+  static int get_col(int c);
+  static void fill_all_windows();
+  static void fill_all_delims();
+};
+
+
+
 
 int main() {
 
@@ -27,10 +39,11 @@ int main() {
 
   refresh();
 
-  fill_screen_delims();
+  WindowController::fill_screen_delims();
 
 
   // WINDOW *windows = gen_windows();
+  WindowController::gen_windows();
 
 
   // Wait for user input to end
@@ -45,27 +58,27 @@ int main() {
   return 0;
 }
 
-WINDOW* gen_windows() {
-  WINDOW windows[NUM_WINDOWS];
+void WindowController::gen_windows() {
 
-  int window_counter = 0;
+  int row_counter = 0;
+  int col_counter = 0;
 
   for(int r = 1; r < MAX_HEIGHT; r+=6) {
     for(int c = 1; c < MAX_WIDTH; c+=18) {
-
       // Create a new window at current location
       WINDOW *w = newwin(HEIGHT, WIDTH, r, c);
-      fill_window(w);
-      fill_delims(w);
-      windows[window_counter++] = w;
+      // fill_window(w);
+      // fill_delims(w);
+      windows[row_counter][col_counter++] = w;
 
     }
+    row_counter++;
   }
 
-  return windows;
+  // return windows;
 }
 
-void fill_screen_delims() {
+void WindowController::fill_screen_delims() {
 
   // Turn on bold
   attron(A_BOLD);
@@ -92,10 +105,10 @@ void fill_screen_delims() {
   refresh();
 }
 
-void fill_window(WINDOW *win) {
+void WindowController::fill_window(WINDOW *win) {
 
   // Turn on bold
-  wattron(win, A_BOLD);
+  wattron(win, A_REVERSE);
 
   // Fill window with blank dots
   for(int r = 0; r < HEIGHT; r+=2) {
@@ -105,13 +118,13 @@ void fill_window(WINDOW *win) {
 
 
   // Turn off bold
-  wattroff(win, A_BOLD);
+  wattroff(win, A_REVERSE);
 
   // Refresh current window to screen
   wrefresh(win);
 }
 
-void fill_delims(WINDOW *win) {
+void WindowController::fill_delims(WINDOW *win) {
 
   // Fill windows with walls
   for(int r = 0; r < HEIGHT; r+=2) {
@@ -126,4 +139,20 @@ void fill_delims(WINDOW *win) {
 
   // Refresh current window to screen
   wrefresh(win);
+}
+
+void WindowController::fill_all_windows() {
+
+}
+
+void WindowController::fill_all_delims() {
+
+}
+
+int WindowController::get_row(int r) {
+
+}
+
+int WindowController::get_col(int c) {
+
 }
