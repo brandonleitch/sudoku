@@ -5,6 +5,8 @@
 
 void move(Direction d);
 
+void menu_action(MenuAction m, Grid* g);
+
 int x = 0;
 int y = 0;
 
@@ -24,17 +26,19 @@ int main() {
 
   refresh();
 
+  // Init grid
+  Grid grid;
+  grid.init();
+
   // Create and fill all windows
   WindowController::gen_windows();
   WindowController::fill_screen_border();
-  WindowController::fill_all_windows();
+  WindowController::fill_all_windows(grid);
   WindowController::fill_all_borders();
 
   WindowController::highlight(y,x);
   WindowController::refresh_all_windows();
 
-  Grid grid;
-  grid.init();
 
   while(true) {
 
@@ -53,7 +57,14 @@ int main() {
 
     }
 
-    WindowController::fill_all_windows();
+    if(InputController::get_action(ch) == MENU) {
+
+      MenuAction m = InputController::get_menu_action(ch);
+      menu_action(m, &grid);
+
+    }
+
+    WindowController::fill_all_windows(grid);
     WindowController::highlight(y,x);
     WindowController::refresh_all_windows();
   }
@@ -84,5 +95,11 @@ void move(Direction d) {
       break;
     case LEFT: x = (--x + 9) % 9;
       break;
+  }
+}
+
+void menu_action(MenuAction m, Grid* g) {
+  switch (m) {
+    case CLEAR: g->init();
   }
 }

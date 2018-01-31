@@ -61,17 +61,12 @@ void WindowController::fill_screen_border() {
   refresh();
 }
 
-void WindowController::fill_window(WINDOW *win) {
+void WindowController::fill_window(WINDOW *win, int y, int x, Grid g) {
 
   // Fill window with blanks
-  // for(int r = 0; r < HEIGHT; r+=2) {
-  //   for(int c = 2; c < WIDTH; c+=6)
-  //     mvwaddch(win, r, c, ' ');
-  // }
-
   for(int r = 0; r < 3; r++) {
     for(int c = 0; c < 3; c++)
-      fill_char_at(win, r, c, ' ');
+      fill_char_at(win, r, c, g.get(y * 3 + r, x * 3 + c));
   }
 
 }
@@ -102,11 +97,11 @@ void WindowController::delete_all_windows() {
   }
 }
 
-void WindowController::fill_all_windows() {
+void WindowController::fill_all_windows(Grid g) {
 
   for(int i = 0; i < NUM_WINDOW_ROWS; i++) {
     for(int j = 0; j < NUM_WINDOW_COLS; j++) {
-      fill_window(windows[i][j]);
+      fill_window(windows[i][j], i, j, g);
     }
   }
 

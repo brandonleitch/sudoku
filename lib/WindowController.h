@@ -15,10 +15,10 @@ public:
 
   static void fill_char_at(WINDOW *win, int row, int col, char c);
 
-  static void fill_window(WINDOW *win);
+  static void fill_window(WINDOW *win, int y, int x, Grid g);
   static void fill_border(WINDOW *win);
 
-  static void fill_all_windows();
+  static void fill_all_windows(Grid g);
   static void fill_all_borders();
 
   static void refresh_window(WINDOW *win);
