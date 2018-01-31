@@ -1,5 +1,4 @@
-#include <ncurses.h>
-#include <vector>
+#include "WindowController.h"
 
 #define HEIGHT 5
 #define WIDTH 17
@@ -10,58 +9,7 @@
 #define NUM_WINDOW_ROWS 3
 #define NUM_WINDOW_COLS 3
 
-
-class WindowController {
-public:
-  static std::vector< std::vector<WINDOW*> > windows;
-  static void gen_windows();
-  static void fill_screen_border();
-  static void fill_window(WINDOW *win);
-  static void fill_border(WINDOW *win);
-  static int get_row(int r);
-  static int get_col(int c);
-  static void fill_all_windows();
-  static void fill_all_borders();
-  static void delete_window(WINDOW *win);
-  static void delete_all_windows();
-};
-
 std::vector< std::vector<WINDOW*> > WindowController::windows;
-
-
-
-
-int main() {
-
-  // Initialize curses screen
-  initscr();
-
-  //Don't print typed characters
-  noecho();
-
-  //Disable line buffering, pass characters immediately to curses
-  cbreak();
-
-  refresh();
-
-  // Create and fill all windows
-  WindowController::gen_windows();
-  WindowController::fill_screen_border();
-  WindowController::fill_all_windows();
-  WindowController::fill_all_borders();
-
-
-
-  // Wait for user input to end
-  getch();
-
-
-  // Clear mem from windows
-  WindowController::delete_all_windows();
-
-  endwin();
-  return 0;
-}
 
 void WindowController::gen_windows() {
 
@@ -114,21 +62,18 @@ void WindowController::fill_screen_border() {
 }
 
 void WindowController::fill_window(WINDOW *win) {
-  // Turn on bold
-  wattron(win, A_REVERSE);
 
-  // Fill window with blank dots
-  for(int r = 0; r < HEIGHT; r+=2) {
-    for(int c = 2; c < WIDTH; c+=6)
-      mvwaddch(win, r, c, ' ');
+  // Fill window with blanks
+  // for(int r = 0; r < HEIGHT; r+=2) {
+  //   for(int c = 2; c < WIDTH; c+=6)
+  //     mvwaddch(win, r, c, ' ');
+  // }
+
+  for(int r = 0; r < 3; r++) {
+    for(int c = 0; c < 3; c++)
+      fill_char_at(win, r, c, ' ');
   }
 
-
-  // Turn off bold
-  wattroff(win, A_REVERSE);
-
-  // Refresh current window to screen
-  wrefresh(win);
 }
 
 void WindowController::fill_border(WINDOW *win) {
@@ -143,12 +88,18 @@ void WindowController::fill_border(WINDOW *win) {
     mvwaddstr(win, r, 0, "-----+-----+-----");
   }
 
-  // Refresh current window to screen
-  wrefresh(win);
 }
 
 void WindowController::delete_window(WINDOW *win) {
   delwin(win);
+}
+
+void WindowController::delete_all_windows() {
+  for(int i = 0; i < NUM_WINDOW_ROWS; i++) {
+    for(int j = 0; j < NUM_WINDOW_COLS; j++) {
+      delete_window(windows[i][j]);
+    }
+  }
 }
 
 void WindowController::fill_all_windows() {
@@ -169,18 +120,25 @@ void WindowController::fill_all_borders() {
   }
 }
 
-void WindowController::delete_all_windows() {
+void WindowController::refresh_window(WINDOW* win) {
+  wrefresh(win);
+}
+
+void WindowController::refresh_all_windows(){
   for(int i = 0; i < NUM_WINDOW_ROWS; i++) {
     for(int j = 0; j < NUM_WINDOW_COLS; j++) {
-      delete_window(windows[i][j]);
+      refresh_window(windows[i][j]);
     }
   }
 }
 
-int WindowController::get_row(int r) {
-
+void WindowController::highlight(int row, int col) {
+  WINDOW* win = windows.at(row / 3).at(col / 3);
+  wattron(win, A_REVERSE);
+  fill_char_at(win, row % 3, col % 3, ' ');
+  wattroff(win, A_REVERSE);
 }
 
-int WindowController::get_col(int c) {
-
+void WindowController::fill_char_at(WINDOW *win, int row, int col, char c) {
+  mvwaddch(win, row * 2, col * 6 + 2, c);
 }
