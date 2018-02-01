@@ -5,14 +5,14 @@
 
 #define NUM_MOVE_CHARS 4
 #define NUM_NUM_CHARS 9
-#define NUM_MENU_CHARS 1
+#define NUM_MENU_CHARS 2
 
 enum Direction {
   LEFT, RIGHT, UP, DOWN
 };
 
 enum MenuAction {
-  CLEAR
+  CLEAR, QUIT
 };
 
 enum Action {

@@ -1,4 +1,7 @@
 #include <ncurses.h>
+#include <fstream>
+#include <string>
+#include <iostream>
 #include "lib/WindowController.h"
 #include "lib/InputController.h"
 #include "lib/Grid.h"
@@ -26,8 +29,17 @@ int main() {
 
   refresh();
 
+  std::fstream puzzle_file;
+  puzzle_file.open("puzzles/sudoku.csv");
+
+  std::string puzzle;
+  std::string solution;
+
+  getline(puzzle_file, puzzle, ',');
+  getline(puzzle_file, solution);
+
   // Init grid
-  Grid grid;
+  Grid grid(puzzle, solution);
   grid.init();
 
   // Create and fill all windows
@@ -60,6 +72,11 @@ int main() {
     if(InputController::get_action(ch) == MENU) {
 
       MenuAction m = InputController::get_menu_action(ch);
+
+      if(m == QUIT) {
+        break;
+      }
+
       menu_action(m, &grid);
 
     }
@@ -68,14 +85,6 @@ int main() {
     WindowController::highlight(y,x);
     WindowController::refresh_all_windows();
   }
-
-
-
-
-
-  // Wait for user input to end
-  getch();
-
 
   // Clear mem from windows
   WindowController::delete_all_windows();

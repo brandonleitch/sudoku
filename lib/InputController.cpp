@@ -2,7 +2,7 @@
 
 char InputController::MOVE_CHARS[NUM_MOVE_CHARS] = {'w','a','s','d'};
 char InputController::NUM_CHARS[NUM_NUM_CHARS] = {'1','2','3','4','5','6','7','8','9'};
-char InputController::MENU_CHARS[NUM_MENU_CHARS] = {'c'};
+char InputController::MENU_CHARS[NUM_MENU_CHARS] = {'c', 'q'};
 
 char InputController::get_char() {
   char ch = getch();
@@ -27,6 +27,7 @@ Direction InputController::get_dir(char c) {
 MenuAction InputController::get_menu_action(char c) {
   switch (c) {
     case 'c': return CLEAR;
+    case 'q': return QUIT;
   }
 }
 
