@@ -13,7 +13,7 @@ public:
 
   static void fill_screen_border();
 
-  static void fill_char_at(WINDOW *win, int row, int col, char c);
+  static void fill_char_at(WINDOW *win, int row, int col, char c, bool perm);
 
   static void fill_window(WINDOW *win, int y, int x, Grid g);
   static void fill_border(WINDOW *win);

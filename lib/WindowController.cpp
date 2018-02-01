@@ -66,7 +66,7 @@ void WindowController::fill_window(WINDOW *win, int y, int x, Grid g) {
   // Fill window with blanks
   for(int r = 0; r < 3; r++) {
     for(int c = 0; c < 3; c++)
-      fill_char_at(win, r, c, g.get(y * 3 + r, x * 3 + c));
+      fill_char_at(win, r, c, g.get(y * 3 + r, x * 3 + c), g.is_puzzle_cell(y * 3 + r, x * 3 + c));
   }
 
 }
@@ -130,10 +130,14 @@ void WindowController::refresh_all_windows(){
 void WindowController::highlight(int row, int col) {
   WINDOW* win = windows.at(row / 3).at(col / 3);
   wattron(win, A_REVERSE);
-  fill_char_at(win, row % 3, col % 3, ' ');
+  fill_char_at(win, row % 3, col % 3, ' ', false);
   wattroff(win, A_REVERSE);
 }
 
-void WindowController::fill_char_at(WINDOW *win, int row, int col, char c) {
+void WindowController::fill_char_at(WINDOW *win, int row, int col, char c, bool perm) {
+  if (perm) {
+    wattron(win, A_BOLD);
+  }
   mvwaddch(win, row * 2, col * 6 + 2, c);
+  wattroff(win, A_BOLD);
 }
