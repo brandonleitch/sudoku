@@ -9,7 +9,9 @@
 
 void move(Direction d);
 
-void menu_action(MenuAction m, Grid* g);
+void menu_action(MenuAction m, Grid** g, int* n);
+
+Grid* start_puzzle(int n);
 
 int x = 0;
 int y = 0;
@@ -30,31 +32,18 @@ int main() {
 
   refresh();
 
-  std::fstream puzzle_file;
-  puzzle_file.open("puzzles/sudoku.csv");
 
-  std::string puzzle;
-  std::string solution;
+  // Set seed to time
+  srand(time(NULL));
 
-  std::string buffer;
-
-  // Set seed to current time and pick random puzzle
-  srand (time (NULL));
-  for(int i = 0; i < rand() % 100; i++) {
-    getline(puzzle_file, buffer);
-  }
-
-  getline(puzzle_file, puzzle, ',');
-  getline(puzzle_file, solution);
-
-  // Init grid
-  Grid grid(puzzle, solution);
-  grid.init();
+  // Get random puzzle
+  int n = rand() % 100;
+  Grid* grid = start_puzzle(n);
 
   // Create and fill all windows
   WindowController::gen_windows();
   WindowController::fill_screen_border();
-  WindowController::fill_all_windows(grid);
+  WindowController::fill_all_windows(*grid);
   WindowController::fill_all_borders();
 
   WindowController::highlight(y,x);
@@ -74,7 +63,7 @@ int main() {
 
     if(InputController::get_action(ch) == NUM) {
 
-      grid.set(y,x,ch);
+      grid->set(y,x,ch);
 
     }
 
@@ -86,15 +75,15 @@ int main() {
         break;
       }
 
-      menu_action(m, &grid);
+      menu_action(m, &grid, &n);
 
     }
 
-    WindowController::fill_all_windows(grid);
+    WindowController::fill_all_windows(*grid);
     WindowController::highlight(y,x);
     WindowController::refresh_all_windows();
 
-    if(grid.check()) {
+    if(grid->check()) {
       break;
     }
   }
@@ -104,6 +93,31 @@ int main() {
 
   endwin();
   return 0;
+}
+
+Grid* start_puzzle(int n) {
+
+  std::fstream puzzle_file;
+  puzzle_file.open("puzzles/sudoku.csv");
+
+  std::string puzzle;
+  std::string solution;
+
+  std::string buffer;
+
+  // Skip lines
+  for(int i = 0; i < n; i++) {
+    getline(puzzle_file, buffer);
+  }
+
+  getline(puzzle_file, puzzle, ',');
+  getline(puzzle_file, solution);
+
+  // Init grid
+  Grid* grid = new Grid(puzzle, solution);
+  grid->init();
+
+  return grid;
 }
 
 
@@ -120,8 +134,16 @@ void move(Direction d) {
   }
 }
 
-void menu_action(MenuAction m, Grid* g) {
+void menu_action(MenuAction m, Grid** g, int* n) {
   switch (m) {
-    case CLEAR: g->init();
+    case CLEAR: (*g)->init(); break;
+    case PREV:
+      *n = (--(*n) + 100) % 100;
+      *g = start_puzzle(*n) ;
+      break;
+    case NEXT:
+      *n = (++(*n) + 100) % 100;
+      *g = start_puzzle(*n) ;
+      break;
   }
 }
