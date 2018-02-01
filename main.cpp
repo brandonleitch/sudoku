@@ -7,14 +7,11 @@
 #include "lib/InputController.h"
 #include "lib/Grid.h"
 
-void move(Direction d);
+void move(Direction d, int* y, int* x);
 
 void menu_action(MenuAction m, Grid** g, int* n);
 
 Grid* start_puzzle(int n);
-
-int x = 0;
-int y = 0;
 
 int main() {
 
@@ -40,6 +37,10 @@ int main() {
   int n = rand() % 100;
   Grid* grid = start_puzzle(n);
 
+  // Init cursor
+  int x = 0;
+  int y = 0;
+
   // Create and fill all windows
   WindowController::gen_windows();
   WindowController::fill_screen_border();
@@ -57,7 +58,7 @@ int main() {
     if(InputController::get_action(ch) == MOVE) {
 
       Direction dir = InputController::get_dir(ch);
-      move(dir);
+      move(dir, &y, &x);
 
     }
 
@@ -121,15 +122,15 @@ Grid* start_puzzle(int n) {
 }
 
 
-void move(Direction d) {
+void move(Direction d, int* y, int* x) {
   switch(d) {
-    case DOWN: y = (++y + 9) % 9;
+    case DOWN: *y = (++*y + 9) % 9;
       break;
-    case UP: y = (--y + 9) % 9;
+    case UP: *y = (--*y + 9) % 9;
       break;
-    case RIGHT: x = (++x + 9) % 9;
+    case RIGHT: *x = (++*x + 9) % 9;
       break;
-    case LEFT: x = (--x + 9) % 9;
+    case LEFT: *x = (--*x + 9) % 9;
       break;
   }
 }
@@ -138,10 +139,12 @@ void menu_action(MenuAction m, Grid** g, int* n) {
   switch (m) {
     case CLEAR: (*g)->init(); break;
     case PREV:
+      delete *g;
       *n = (--(*n) + 100) % 100;
       *g = start_puzzle(*n) ;
       break;
     case NEXT:
+      delete *g;
       *n = (++(*n) + 100) % 100;
       *g = start_puzzle(*n) ;
       break;
