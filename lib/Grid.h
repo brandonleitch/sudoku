@@ -15,6 +15,7 @@ public:
 
   void set(int row, int col, char num);
   int get(int row, int col);
+  bool is_puzzle_cell(int row, int col);
 };
 
 

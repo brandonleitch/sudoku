@@ -21,11 +21,15 @@ void Grid::init(){
 }
 
 void Grid::set(int row, int col, char num) {
-  char c = puzzle.at(row * 9 + col);
-  if (c == '0')
+  if(!is_puzzle_cell(row, col))
     grid[row][col] = num;
 }
 
 int Grid::get(int row, int col) {
   return grid[row][col];
+}
+
+bool Grid::is_puzzle_cell(int row, int col) {
+  char c = puzzle.at(row * 9 + col);
+  return c != '0';
 }
