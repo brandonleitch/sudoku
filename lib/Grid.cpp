@@ -33,3 +33,18 @@ bool Grid::is_puzzle_cell(int row, int col) {
   char c = puzzle.at(row * 9 + col);
   return c != '0';
 }
+
+bool Grid::check() {
+  for (int i = 0; i < 9; i++) {
+    for(int j = 0; j < 9; j++) {
+      if(!check_cell(i, j)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool Grid::check_cell(int row, int col) {
+  return get(row, col) == solution.at(row * 9 + col);
+}

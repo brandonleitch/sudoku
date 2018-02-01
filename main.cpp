@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <stdlib.h>
 #include "lib/WindowController.h"
 #include "lib/InputController.h"
 #include "lib/Grid.h"
@@ -34,6 +35,14 @@ int main() {
 
   std::string puzzle;
   std::string solution;
+
+  std::string buffer;
+
+  // Set seed to current time and pick random puzzle
+  srand (time (NULL));
+  for(int i = 0; i < rand() % 100; i++) {
+    getline(puzzle_file, buffer);
+  }
 
   getline(puzzle_file, puzzle, ',');
   getline(puzzle_file, solution);
@@ -84,6 +93,10 @@ int main() {
     WindowController::fill_all_windows(grid);
     WindowController::highlight(y,x);
     WindowController::refresh_all_windows();
+
+    if(grid.check()) {
+      break;
+    }
   }
 
   // Clear mem from windows
